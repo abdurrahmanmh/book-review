@@ -47,8 +47,9 @@ class Book extends Model
 
     }
 
-    public function scopeMinReviews(Builder $query, int $minReviews) : Builder|QueryBuilder {
-        return $query->having('reviews_count','>=',$minReviews);
+    public function scopeMinReviews(Builder $query, int $minReviews): Builder|QueryBuilder
+    {
+        return $query->having('reviews_count', '>=', $minReviews);
     }
 
     private function dateRangeFilter(Builder $query, $from = null, $to = null)
@@ -63,4 +64,22 @@ class Book extends Model
     }
 
     //"select `books`.*, (select count(*) from `reviews` where `books`.`id` = `reviews`.`book_id`) as `reviews_count`, (select avg(`reviews`.`rating`) from `reviews` where `books`.`id` = `reviews`.`book_id`) as `reviews_avg_rating` from `books` order by `reviews_count` desc, `reviews_avg_rating` desc"
+
+    public function scopePopularLastMonth(Builder $query): Builder|QueryBuilder
+    {
+        return $query->popular(now()->subMonth(), now())->highestRated(now()->subMonth(), now())->minReviews(2);
+    }
+    public function scopePopularLast6Month(Builder $query): Builder|QueryBuilder
+    {
+        return $query->popular(now()->subMonth(6), now())->highestRated(now()->subMonth(6), now())->minReviews(5);
+    }
+
+    public function scopeHighestRatedLastMonth(Builder $query): Builder|QueryBuilder
+    {
+        return $query->highestRated(now()->subMonth(), now())->popular(now()->subMonth(), now())->minReviews(2);
+    }
+    public function scopeHighestRatedLast6Month(Builder $query): Builder|QueryBuilder
+    {
+        return $query->highestRated(now()->subMonth(6), now())->popular(now()->subMonth(6), now())->minReviews(5);
+    }
 }
