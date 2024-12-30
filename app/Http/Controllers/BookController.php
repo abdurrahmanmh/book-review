@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Book;
+use Illuminate\Support\Facades\Cache;
+
 class BookController extends Controller
 {
     /**
@@ -28,7 +30,13 @@ class BookController extends Controller
             default => $books
         };
 
-        $books = $books->get();
+        //$books = $books->get();
+
+        $cacheKey='books:'.$filter.':'.$title;
+        $books = Cache::remember($cacheKey, 3600, function() use ($books){
+            //dd('Not From Cache');
+            return $books->get();
+        });
 
         // return view('books.index', ['books'=>compact('books')]);
         return view('books.index', ['books' => $books]);
