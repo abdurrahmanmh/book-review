@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -14,10 +13,19 @@ return new class extends Migration
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
 
+            // $table->unsignedBigInteger('book_id');
+
             $table->text('review');
             $table->unsignedTinyInteger('rating');
 
             $table->timestamps();
+
+            //on cascade delete everything
+            // $table->foreign('book_id')->references('id')->on('books')->onDelete('cascade');
+
+            // shorter syntax
+            $table->foreignId('book_id')->constrained()->cascadeOnDelete();
+
         });
     }
 
