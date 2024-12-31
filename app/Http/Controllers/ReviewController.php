@@ -31,7 +31,10 @@ class ReviewController extends Controller
         $data=$request->validate([
             'review'=>'required|min:15',
             'rating'=>'required|integer|between:1,5'
-        ]);
+        ],[
+            'review.min' => 'Review must be at least 15 characters.',
+        ]
+    );
 
         $book->reviews()->create($data);
 

@@ -3,7 +3,18 @@
 @section('content')
 <h1 class="mb-10 text-2xl">Add Review for {{$book->title}}</h1>
 
-<form action="{{route('books.reviews.store',$book)}}" method="post">
+{{-- Display validation errors --}}
+@if ($errors->any())
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+<form  method="POST" action="{{route('books.reviews.store',$book)}}" >
     @csrf
     <label for="review">Review</label>
     <textarea name="review" id="review" required class="input mb-4"></textarea>
