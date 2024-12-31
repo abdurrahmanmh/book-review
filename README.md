@@ -7,6 +7,28 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## About Project
+
+Book review is for learning how database works in Laravel
+
+how to run?
+have docker
+install node js, composer(use docker-compose.yml in l11-task-list), php(enable zip, pdo extension)
+
+follow laravel documentation installation
+
+use docker for mysql
+
+
+## Screenshot
+
+![Homepage](Screenshots/1.png)
+
+![Book Reviews](Screenshots/2.png)
+
+![Add Reviews](Screenshots/3.png)
+
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
