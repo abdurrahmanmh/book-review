@@ -21,29 +21,28 @@ class Book extends Model
         return $query->where('title', 'LIKE', '%' . $title . '%');
     }
 
-    public function scopePopular(Builder $query, $from = null, $to = null): Builder|QueryBuilder
+    public function scopeWithReviewsCount(Builder $query,$from=null,$to=null): Builder|QueryBuilder
     {
         return $query->withCount([
-            'reviews' =>
-                // function (Builder $q) use ($from, $to) {
-                //     if ($from && !$to) {
-                //         $q->where('created_at', '>=', $from);
-                //     } else if (!$from && $to) {
-                //         $q->where('created_at', '<=', $to);
-                //     } else if ($from && $to) {
-                //         $q->where('created_at', '<=', [$from, $to]);
-                //     }
-                // }
-                fn(Builder $q) => $this->dateRangeFilter($q, $from, $to)
-        ])->orderBy('reviews_count', 'desc');
+            'reviews'=>fn(Builder $q) => $this->dateRangeFilter($q,$from,$to)
+        ]);
     }
-
-    public function scopeHighestRated(Builder $query, $from = null, $to = null): Builder|QueryBuilder
+    public function scopeWithAvgRating(Builder $query,$from=null,$to=null): Builder|QueryBuilder
     {
         return $query->withAvg([
             'reviews' =>
                 fn(Builder $q) => $this->dateRangeFilter($q, $from, $to)
-        ], 'rating')->orderBy('reviews_avg_rating', 'desc');
+        ], 'rating');
+    }
+
+    public function scopePopular(Builder $query, $from = null, $to = null): Builder|QueryBuilder
+    {
+        return $query->withReviewsCount()->orderBy('reviews_count', 'desc');
+    }
+
+    public function scopeHighestRated(Builder $query, $from = null, $to = null): Builder|QueryBuilder
+    {
+        return $query->withAvgRating()->orderBy('reviews_avg_rating', 'desc');
 
     }
 
@@ -81,5 +80,13 @@ class Book extends Model
     public function scopeHighestRatedLast6Month(Builder $query): Builder|QueryBuilder
     {
         return $query->highestRated(now()->subMonth(6), now())->popular(now()->subMonth(6), now())->minReviews(5);
+    }
+
+    
+    protected static function booted()
+    {
+        static::updated(fn(Book $book) => cache()->forget('book:' . $book->id));
+        static::deleted(fn(Book $book) => cache()->forget('book:' . $book->id));
+
     }
 }
